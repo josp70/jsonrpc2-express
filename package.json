@@ -21,7 +21,9 @@
   },
   "homepage": "https://github.com/josp70/jsonrpc2-express#readme",
   "devDependencies": {
+    "body-parser": "^1.18.2",
     "chakram": "^1.5.0",
+    "jsonrpc-lite": "^1.3.0",
     "mocha": "^4.0.1"
   }
 }
