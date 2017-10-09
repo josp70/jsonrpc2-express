@@ -1,0 +1,27 @@
+{
+  "name": "jsonrpc2-express",
+  "version": "0.1.0",
+  "description": "jsonrpc 2.0 end point based in express route",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josp70/jsonrpc2-express.git"
+  },
+  "keywords": [
+    "jsonrpc",
+    "JSON-RPC"
+  ],
+  "author": "Jorge Suit <josp.jorge@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/josp70/jsonrpc2-express/issues"
+  },
+  "homepage": "https://github.com/josp70/jsonrpc2-express#readme",
+  "devDependencies": {
+    "chakram": "^1.5.0",
+    "mocha": "^4.0.1"
+  }
+}
