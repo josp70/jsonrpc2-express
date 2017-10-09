@@ -12,7 +12,6 @@ end-point.
 
 ```javascript
 const express = require('express');
-const bearerToken = require('express-bearer-token');
 const jsonrpc = require('jsonrpc2-express')
 
 const app = express();
