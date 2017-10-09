@@ -10,6 +10,51 @@ end-point.
 
 ## Usage
 
+```javascript
+const express = require('express');
+const bearerToken = require('express-bearer-token');
+const jsonrpc = require('jsonrpc2-express')
+
+const app = express();
+
+let routerRpc = express.Router();
+
+jsonrpc('/rpc/module1', routerRpc, {
+    methods: require('./module1.js')
+});
+
+app.use('/api', routerRpc);
+
+app.listen(3000, function() {
+    console.log('Server listening on port 3000');
+});
+```
+
+The file `module1.js` with the implementation of the method is:
+
+```javascript
+exports.f1 = function(req) {
+	console.log(req.body.params)
+    return {
+	field1: 'answer from f1',
+	user: req.user
+    };
+};
+
+exports.f2 = function(req) {
+	console.log(req.body.params)
+    return {
+	field1: 'answer from f2',
+	user: req.user
+    };
+};
+
+exports.ferror = function(req) {
+    throw new Error("sorry");
+};
+```
+
+The parameters for each method can be read from `req.body.params`
 
 ## Tests
 
