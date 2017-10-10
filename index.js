@@ -9,30 +9,39 @@ const jsonrpc = require('jsonrpc-lite');
 var endpoints = {};
 
 function validateRequest(req, res, next) {
-    console.log('validateRequest');
-    let parsed = jsonrpc.parseObject(req.body);
-    console.log(parsed.type);
-    
-    if(parsed.type!=='request' && parsed.type!=='notification') {
-        res.json(jsonrpc.error(0, jsonrpc.JsonRpcError.invalidRequest({
-	    message: 'body is not a valid JSON-RPC request or notification',
-	    body: req.body
-	})));
+    if(req.method != 'POST') {
+	next();
     } else {
-	const endpoint = endpoints[req.path];
+	//console.log('validateRequest:' + req.path);
+	const endpoint = endpoints[req.path]
 	if(endpoint == null) {
-	    next(new Error('RPC endpoint not mounted: ' + req.path));
+	    res.status(404).json({
+		message: "RPC path " + req.path + ' not found',
+		validPaths: Object.keys(endpoints)
+	    });
 	} else {
-	    const m = endpoint.methods[req.body.method];
-	    if(m == null) {
-		let err = new jsonrpc.JsonRpcError.methodNotFound({
-		    method: req.body.method,
-		    endpoint: req.path
-		});
-		next(err);
+	    const parsed = jsonrpc.parseObject(req.body);
+	    //console.log(parsed.type);
+	    if(parsed.type!=='request' && parsed.type!=='notification') {
+		res.json(jsonrpc.error(0, jsonrpc.JsonRpcError.invalidRequest({
+		    message: 'body is not a valid JSON-RPC request or notification',
+		    body: req.body
+		})));
 	    } else {
-		req.jsonrpc = {method: m};
-		next();
+		if(endpoint == null) {
+		} else {
+		    const m = endpoint.methods[req.body.method];
+		    if(m == null) {
+			let err = new jsonrpc.JsonRpcError.methodNotFound({
+			    method: req.body.method,
+			    endpoint: req.path
+			});
+			next(err);
+		    } else {
+			req.jsonrpc = {method: m};
+			next();
+		    }
+		}
 	    }
 	}
     }
@@ -49,16 +58,14 @@ module.exports = function(path, router, options) {
     router.use(validateRequest);
     
     router.post(path, function(req, res) {
-        console.log('POST: main entry point');
-	// look for requested, if not found return method_not_found
-	// if found, invoke requested method try/catch
+        //console.log('POST: main entry point');
 	let result = req.jsonrpc.method(req);
         res.json(req.body.id==null? {} : jsonrpc.success(req.body.id, result));
     });
     
     router.use(function (err, req, res, next) {
-        console.log("ERROR middleware");
-        console.log(err.name);
+        //console.log("ERROR middleware");
+        //console.log(err.name);
 	let rpcError;
 	switch (err.name) {
 	case "JsonRpcError":

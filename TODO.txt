@@ -1,0 +1,5 @@
+- (DONE) add tests.
+
+- improve documentation: add example with JWT middleware.
+
+- add travis CI or something similar.

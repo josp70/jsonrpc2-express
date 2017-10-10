@@ -1,0 +1,142 @@
+//During the test the env variable is set to test
+process.env.NODE_ENV = 'test';
+
+const chakram = require('chakram');
+const expect = chakram.expect;
+
+const express = require('express');
+const jsonrpcRouter = require('../index.js');
+const jsonrpcHelper = require('jsonrpc-lite');
+const uuidv1 = require('uuid/v1');
+
+describe('JSON-RPC', () => {
+    var app, server, port, url;
+
+    before("create server", () => {
+	app = express();
+	let routerRpc = express.Router();
+	jsonrpcRouter('/module', routerRpc, {
+	    methods: {
+		myMethod: function(req) {
+		    return req.body.params
+		},
+		throwError: function(req) {
+		    throw new Error('error detected & thrown');
+		}
+	    }
+	});
+	app.use('/rpc', routerRpc);
+	server = app.listen();
+	port = server.address().port;
+    });
+    describe('invalid requests', () => {
+	it('it return 404 on GET', () => {
+	    const response = chakram.get('http://localhost:'+port+'/rpc');
+	    expect(response).to.have.status(404);
+	    return chakram.wait();
+	});
+	it('it return 404 on not found path', () => {
+	    const response = chakram.post('http://localhost:'+port+'/rpc/notfound');
+	    expect(response).to.have.status(404);
+	    return chakram.wait();
+	});
+	it('it return 200 & invalid request on empty body', () => {
+	    const response = chakram.post('http://localhost:'+port+'/rpc/module');
+	    expect(response).to.have.status(200);
+            expect(response).to.have.header("content-type", "application/json; charset=utf-8");
+	    expect(response).to.comprise.of.json({
+		"error": {
+		    "code": -32600, 
+		    "data": {}, 
+		    "message": "Invalid request"
+		}, 
+		"id": 0, 
+		"jsonrpc": "2.0"
+	    });
+	    return chakram.wait();
+	});
+	it('it return 200 & method not found', () => {
+	    const response = chakram.post('http://localhost:'+port+'/rpc/module');
+	    expect(response).to.have.status(200);
+            expect(response).to.have.header("content-type", "application/json; charset=utf-8");
+	    expect(response).to.comprise.of.json({
+		"error": {
+		    "code": -32600, 
+		    "data": {}, 
+		    "message": "Invalid request"
+		}, 
+		"id": 0, 
+		"jsonrpc": "2.0"
+	    });
+	    return chakram.wait();
+	});
+	it("it return 200 & Parse error", function () {
+	    const data = "{'name': 'this JSON is invalid'";
+            const response = chakram.post('http://localhost:'+port+'/rpc/module',
+					  data,
+					  param = {
+					      "headers": {"Content-Type": "application/json"}
+					  });
+	    expect(response).to.have.status(200);
+            expect(response).to.have.header("content-type", "application/json; charset=utf-8");
+	    expect(response).to.comprise.of.json({
+	    jsonrpc:"2.0",
+		id:0,
+		error:{
+		    message:"Parse error",
+		    code:-32700,
+		    data: {
+			expose: true,
+			statusCode: 400,
+			status: 400,
+			body: '"{\'name\': \'this JSON is invalid\'"',
+			type: 'entity.parse.failed'
+		    }
+		}
+	    });
+	    //after(function() {console.log(response.valueOf().body)});
+	    return chakram.wait();
+	});
+    });
+    describe('valid requests', () => {
+	it("it return 200 & json response", function () {
+	    const id = uuidv1();
+	    const data = jsonrpcHelper.request(id, 'myMethod', {hello: 'world'});
+            const response = chakram.post('http://localhost:'+port+'/rpc/module',
+					  data,
+					  param = {
+					      "headers": {"Content-Type": "application/json"}
+					  });
+	    expect(response).to.have.status(200);
+            expect(response).to.have.header("content-type", "application/json; charset=utf-8");
+	    expect(response).to.comprise.of.json({
+		jsonrpc: '2.0',
+		id: id,
+		result: { hello: 'world' }
+	    });
+	    //after(function() {console.log(response.valueOf().body)});
+	    return chakram.wait();
+	});
+	it("it return 200 & internal error", function () {
+	    const id = uuidv1();
+	    const data = jsonrpcHelper.request(id, 'throwError', {});
+            const response = chakram.post('http://localhost:'+port+'/rpc/module',
+					  data,
+					  param = {
+					      "headers": {"Content-Type": "application/json"}
+					  });
+	    expect(response).to.have.status(200);
+            expect(response).to.have.header("content-type", "application/json; charset=utf-8");
+	    expect(response).to.comprise.of.json(
+		jsonrpcHelper.error(id,
+				    jsonrpcHelper.JsonRpcError.internalError({
+					message: 'error detected & thrown'
+				    })));
+	    //after(function() {console.log(response.valueOf().body)});
+	    return chakram.wait();
+	});
+    });
+    after('shutdown server', () => {
+	server.close();
+    });
+});

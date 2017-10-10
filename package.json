@@ -4,7 +4,7 @@
   "description": "jsonrpc 2.0 end point based in express route",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "mocha ./test"
   },
   "repository": {
     "type": "git",
@@ -20,10 +20,14 @@
     "url": "https://github.com/josp70/jsonrpc2-express/issues"
   },
   "homepage": "https://github.com/josp70/jsonrpc2-express#readme",
-  "devDependencies": {
+  "dependencies": {
     "body-parser": "^1.18.2",
+    "jsonrpc-lite": "^1.3.0"
+  },
+  "devDependencies": {
     "chakram": "^1.5.0",
-    "jsonrpc-lite": "^1.3.0",
-    "mocha": "^4.0.1"
+    "express": "^4.16.2",
+    "mocha": "^4.0.1",
+    "uuid": "^3.1.0"
   }
 }
