@@ -1,4 +1,4 @@
-JSON-RPC end-point for express
+jsonrpc2-express: JSON-RPC end-point for express
 =========
 
 Module to configure an express router in order to expose a JSON-RPC
