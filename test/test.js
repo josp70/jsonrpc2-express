@@ -15,6 +15,13 @@ describe('JSON-RPC', () => {
     before("create server", () => {
 	app = express();
 	let routerRpc = express.Router();
+	routerRpc.use(function(req, res, next) {
+	    if(req.query.test_mw_error == null) {
+		next()
+	    } else {
+		next(new Error("error from earlier middleware"));
+	    }
+	});
 	jsonrpcRouter('/module', routerRpc, {
 	    methods: {
 		myMethod: function(req) {
@@ -33,6 +40,17 @@ describe('JSON-RPC', () => {
 	it('it return 404 on GET', () => {
 	    const response = chakram.get('http://localhost:'+port+'/rpc');
 	    expect(response).to.have.status(404);
+	    return chakram.wait();
+	});
+	it('it return 200 on earlier middleware erros', () => {
+	    const response = chakram.get('http://localhost:'+port+'/rpc?test_mw_error=1');
+	    expect(response).to.have.status(200);
+	    expect(response).to.comprise.of.json(
+		jsonrpcHelper.error(0,
+				    jsonrpcHelper.JsonRpcError.internalError({
+					message: 'error from earlier middleware'
+				    })));
+	    //after(function() {console.log(response.valueOf().body)});
 	    return chakram.wait();
 	});
 	it('it return 404 on not found path', () => {

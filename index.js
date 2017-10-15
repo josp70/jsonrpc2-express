@@ -83,6 +83,6 @@ module.exports = function(path, router, options) {
 	    });
 	    break;
 	}
-	res.status(200).json(jsonrpc.error(req.body.id||0, rpcError));
+	res.status(200).json(jsonrpc.error((req.body && req.body.id)||0, rpcError));
     });
 };
