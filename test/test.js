@@ -29,6 +29,12 @@ describe('JSON-RPC', () => {
 		},
 		throwError: function(req) {
 		    throw new Error('error detected & thrown');
+		},
+		throwJsonRpcError: function(req) {
+		    throw new jsonrpcHelper.JsonRpcError.invalidParams({
+			"message": "missing parameter",
+			"parameter": "idTask"
+		    });
 		}
 	    }
 	});
@@ -149,6 +155,25 @@ describe('JSON-RPC', () => {
 		jsonrpcHelper.error(id,
 				    jsonrpcHelper.JsonRpcError.internalError({
 					message: 'error detected & thrown'
+				    })));
+	    //after(function() {console.log(response.valueOf().body)});
+	    return chakram.wait();
+	});
+	it("it return 200 & invalid parameter error", function () {
+	    const id = uuidv1();
+	    const data = jsonrpcHelper.request(id, 'throwJsonRpcError', {});
+            const response = chakram.post('http://localhost:'+port+'/rpc/module',
+					  data,
+					  param = {
+					      "headers": {"Content-Type": "application/json"}
+					  });
+	    expect(response).to.have.status(200);
+            expect(response).to.have.header("content-type", "application/json; charset=utf-8");
+	    expect(response).to.comprise.of.json(
+		jsonrpcHelper.error(id,
+				    jsonrpcHelper.JsonRpcError.invalidParams({
+					"message": "missing parameter",
+					"parameter": "idTask"
 				    })));
 	    //after(function() {console.log(response.valueOf().body)});
 	    return chakram.wait();
