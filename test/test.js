@@ -9,6 +9,10 @@ const jsonrpcRouter = require('../index.js');
 const jsonrpcHelper = require('jsonrpc-lite');
 const uuidv1 = require('uuid/v1');
 
+entityNotFound = function(data) {
+    return new jsonrpcHelper.JsonRpcError('Entity not found', -33001, data)
+};
+
 describe('JSON-RPC', () => {
     var app, server, port, url;
 
@@ -34,6 +38,12 @@ describe('JSON-RPC', () => {
 		    throw new jsonrpcHelper.JsonRpcError.invalidParams({
 			"message": "missing parameter",
 			"parameter": "idTask"
+		    });
+		},
+		throwCustomRpcError:  function(req) {
+		    throw entityNotFound({
+			"message": "file not found",
+			"filename": "the_name_of_the_file"
 		    });
 		}
 	    }
@@ -174,6 +184,25 @@ describe('JSON-RPC', () => {
 				    jsonrpcHelper.JsonRpcError.invalidParams({
 					"message": "missing parameter",
 					"parameter": "idTask"
+				    })));
+	    //after(function() {console.log(response.valueOf().body)});
+	    return chakram.wait();
+	});
+	it("it return 200 & custom RPC error", function () {
+	    const id = uuidv1();
+	    const data = jsonrpcHelper.request(id, 'throwCustomRpcError', {});
+            const response = chakram.post('http://localhost:'+port+'/rpc/module',
+					  data,
+					  param = {
+					      "headers": {"Content-Type": "application/json"}
+					  });
+	    expect(response).to.have.status(200);
+            expect(response).to.have.header("content-type", "application/json; charset=utf-8");
+	    expect(response).to.comprise.of.json(
+		jsonrpcHelper.error(id,
+				    entityNotFound({
+					"message": "file not found",
+					"filename": "the_name_of_the_file"
 				    })));
 	    //after(function() {console.log(response.valueOf().body)});
 	    return chakram.wait();
