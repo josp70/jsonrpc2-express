@@ -59,8 +59,12 @@ module.exports = function(path, router, options) {
     
     router.post(path, function(req, res) {
         //console.log('POST: main entry point');
-	let result = req.jsonrpc.method(req);
-        res.json(req.body.id==null? {} : jsonrpc.success(req.body.id, result));
+	let result = Promise.resolve(req.jsonrpc.method(req));
+	result.then( (v)=>{
+	    res.json(req.body.id==null? {} : jsonrpc.success(req.body.id, v));
+	}, (reason)=>{
+	    next(reason);
+	})
     });
     
     router.use(function (err, req, res, next) {

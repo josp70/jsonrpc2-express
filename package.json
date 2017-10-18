@@ -1,6 +1,6 @@
 {
   "name": "jsonrpc2-express",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "jsonrpc 2.0 end point based in express route",
   "main": "index.js",
   "scripts": {
