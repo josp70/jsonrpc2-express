@@ -45,6 +45,11 @@ describe('JSON-RPC', () => {
 			"message": "file not found",
 			"filename": "the_name_of_the_file"
 		    });
+		},
+		methodResolved: function(req) {
+		    return new Promise((resolve, reject) => {
+			resolve({promise: "fulfilled"});
+		    })
 		}
 	    }
 	});
@@ -204,6 +209,23 @@ describe('JSON-RPC', () => {
 					"message": "file not found",
 					"filename": "the_name_of_the_file"
 				    })));
+	    //after(function() {console.log(response.valueOf().body)});
+	    return chakram.wait();
+	});
+	it("it return 200 & resolved value from Promise", () => {
+	    const id = uuidv1();
+	    const data = jsonrpcHelper.request(id, 'methodResolved', {});
+            const response = chakram.post('http://localhost:'+port+'/rpc/module',
+					  data,
+					  param = {
+					      "headers": {"Content-Type": "application/json"}
+					  });
+	    expect(response).to.have.status(200);
+            expect(response).to.have.header("content-type", "application/json; charset=utf-8");
+	    expect(response).to.comprise.of.json(
+		jsonrpcHelper.success(id, {
+		    promise: "fulfilled"
+		}));
 	    //after(function() {console.log(response.valueOf().body)});
 	    return chakram.wait();
 	});

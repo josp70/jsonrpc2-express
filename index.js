@@ -57,14 +57,14 @@ module.exports = function(path, router, options) {
     router.use(bodyParser.json());
     router.use(validateRequest);
     
-    router.post(path, function(req, res) {
+    router.post(path, function(req, res, next) {
         //console.log('POST: main entry point');
 	let result = Promise.resolve(req.jsonrpc.method(req));
 	result.then( (v)=>{
 	    res.json(req.body.id==null? {} : jsonrpc.success(req.body.id, v));
-	}, (reason)=>{
+	}).catch((reason)=>{
 	    next(reason);
-	})
+	});
     });
     
     router.use(function (err, req, res, next) {
