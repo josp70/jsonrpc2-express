@@ -1,5 +1,6 @@
 jsonrpc2-express: JSON-RPC end-point for express
 =========
+![build status](https://gitlab.com/jorge.suit/jsonrpc2-express/badges/master/build.svg)
 
 Module to configure an express router in order to expose a JSON-RPC
 end-point.
