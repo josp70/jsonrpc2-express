@@ -16,12 +16,13 @@ const HTTP404 = 404;
 
 describe('JSON-RPC', () => {
   let port = -1;
-  const url = `http://localhost:${port}/rpc`;
+  let url = '';
 
   before('create service', (done) => {
     service.start();
     service.app.on('ready', () => {
       ({port} = service.server.address());
+      url = `http://localhost:${port}/rpc`;
       done();
     });
   });
@@ -107,7 +108,6 @@ describe('JSON-RPC', () => {
             expose: true,
             statusCode: 400,
             status: 400,
-            body: '{"name": "this JSON is invalid"',
             type: 'entity.parse.failed'
           }
         }

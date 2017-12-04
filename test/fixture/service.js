@@ -12,7 +12,7 @@ const entityNotFound = (data) =>
 exports.entityNotFound = entityNotFound;
 
 const app = express();
-const routerRpc = express.Router();
+const routerRpc = new express.Router();
 
 const isValue = (value) => typeof value !== 'undefined' && value !== null;
 
@@ -56,21 +56,6 @@ jsonrpcRouter('/module', routerRpc, {
 });
 
 app.use('/rpc', routerRpc);
-
-var route, routes = [];
-
-app._router.stack.forEach(function(middleware){
-    if(middleware.route){ // routes registered directly on the app
-        routes.push(middleware.route);
-    } else if(middleware.name === 'router'){ // router middleware 
-        middleware.handle.stack.forEach(function(handler){
-            route = handler.route;
-            route && routes.push(route);
-        });
-    }
-});
-
-console.log(JSON.stringify(routes));
 
 let server = null;
 
