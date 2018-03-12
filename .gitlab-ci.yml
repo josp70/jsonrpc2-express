@@ -12,13 +12,8 @@ cache:
   paths:
     - node_modules/
 
-install:
-  stage: install
+install_test:
   script:
     - npm install
-
-test:
-  stage: test
-  script:
     - npm run lint
     - npm test
