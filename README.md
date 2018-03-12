@@ -11,6 +11,7 @@ end-point.
 
 ## Usage
 
+
 ```javascript
 const express = require('express');
 const jsonrpc = require('jsonrpc2-express')
