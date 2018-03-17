@@ -1,6 +1,6 @@
 {
   "name": "jsonrpc2-express",
-  "version": "0.4.1-readme",
+  "version": "0.4.3",
   "description": "jsonrpc 2.0 end point for Express.js",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/jorge.suit/jsonrpc2-express.git"
+    "url": "https://gitlab.com/jorge.suit/jsonrpc2-express"
   },
   "keywords": [
     "jsonrpc",
