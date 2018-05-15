@@ -1,6 +1,6 @@
 {
   "name": "jsonrpc2-express",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "jsonrpc 2.0 end point for Express.js",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://gitlab.com/jorge.suit/jsonrpc2-express/issues"
   },
-  "homepage": "https://github.com/josp70/jsonrpc2-express#readme",
+  "homepage": "https://gitlab.com/jorge.suit/jsonrpc2-express",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
