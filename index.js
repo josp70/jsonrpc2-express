@@ -58,7 +58,7 @@ module.exports = (path, router, options) => {
   endpoints[path] = {};
   endpoints[path].methods = options.methods;
   endpoints[path].keys = Object.keys(options.methods);
-  router.use(bodyParser.json());
+  router.use(bodyParser.json(options.bodyParser));
   router.use(validateRequest);
 
   router.route(path).post((req, res, next) => {

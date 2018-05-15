@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://gitlab.com/jorge.suit/jsonrpc2-express/issues"
   },
-  "homepage": "https://github.com/josp70/jsonrpc2-express#readme",
+  "homepage": "https://gitlab.com/jorge.suit/jsonrpc2-express",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",

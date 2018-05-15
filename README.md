@@ -22,7 +22,10 @@ const app = express();
 let routerRpc = express.Router();
 
 jsonrpc('/rpc/module1', routerRpc, {
-    methods: require('./module1.js')
+    methods: require('./module1.js'),
+    bodyParser: {
+        limit: '50mb'
+    }
 });
 
 app.use('/api', routerRpc);
@@ -32,7 +35,7 @@ app.listen(3000, function() {
 });
 ```
 
-The file `module1.js` with the implementation of the method is:
+The file `module1.js` with the implementation of the different methods is:
 
 ```javascript
 exports.f1 = function(req) {
